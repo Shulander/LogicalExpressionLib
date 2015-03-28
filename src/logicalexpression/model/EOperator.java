@@ -12,55 +12,55 @@ public enum EOperator {
     
     EQ(new String[]{"EQ", "=="}) {
         @Override
-        Boolean compare(Comparable a, Comparable b) {
+        public Boolean compare(Comparable a, Comparable b) {
             return a == null ? b == null : a.compareTo(b) == 0;
         }
     },
     NE(new String[]{"NE", "!="}) {
         @Override
-        Boolean compare(Comparable a, Comparable b) {
+        public Boolean compare(Comparable a, Comparable b) {
             return a == null ? b != null : a.compareTo(b) != 0;
         }
     },
     GT(new String[]{"GT", ">"}) {
         @Override
-        Boolean compare(Comparable a, Comparable b) {
+        public Boolean compare(Comparable a, Comparable b) {
             return a.compareTo(b) > 0;
         }
     },
     LT(new String[]{"LT", "<"}) {
         @Override
-        Boolean compare(Comparable a, Comparable b) {
+        public Boolean compare(Comparable a, Comparable b) {
             return a.compareTo(b) < 0;
         }
     },
     LE(new String[]{"LE", ">="}) {
         @Override
-        Boolean compare(Comparable a, Comparable b) {
+        public Boolean compare(Comparable a, Comparable b) {
             return LT.compare(a, b) || EQ.compare(a, b);
         }
     },
     GE(new String[]{"GE", "<="}) {
         @Override
-        Boolean compare(Comparable a, Comparable b) {
+        public Boolean compare(Comparable a, Comparable b) {
             return GT.compare(a, b) || EQ.compare(a, b);
         }
     },
     AND(new String[]{"AND", "&&"}) {
         @Override
-        Boolean compare(Comparable a, Comparable b) {
+        public Boolean compare(Comparable a, Comparable b) {
             return a.compareTo(true)==0 && a.compareTo(b)==0;
         }
     },
     OR(new String[]{"OR", "||"}) {
         @Override
-        Boolean compare(Comparable a, Comparable b) {
+        public Boolean compare(Comparable a, Comparable b) {
             return a.compareTo(true)==0 || b.compareTo(true)==0;
         }
     },
     NOT(new String[]{"NOT"}) {
         @Override
-        Boolean compare(Comparable a, Comparable b) {
+        public Boolean compare(Comparable a, Comparable b) {
             if(b != null) {
                 return b.compareTo(true)!=0;
             } else {
@@ -76,7 +76,7 @@ public enum EOperator {
         values.addAll(Arrays.asList(newValue));
     }
     
-    abstract Boolean compare(Comparable a, Comparable b);
+    public abstract Boolean compare(Comparable a, Comparable b);
     
     public static EOperator parseString(String str) {
         for (EOperator operator : EOperator.values()) {

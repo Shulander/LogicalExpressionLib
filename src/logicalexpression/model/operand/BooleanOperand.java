@@ -12,8 +12,12 @@ package logicalexpression.model.operand;
 class BooleanOperand extends Operand {
     private final Boolean booleanValue;
     
-    public BooleanOperand(String value) {
+    BooleanOperand(String value) {
         this.booleanValue = Boolean.valueOf(value);
+    }
+
+    BooleanOperand(boolean value) {
+        this.booleanValue = value;
     }
 
     @Override

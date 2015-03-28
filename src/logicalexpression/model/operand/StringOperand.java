@@ -9,7 +9,7 @@ public class StringOperand extends Operand {
 
     StringOperand(String value) {
         stringValue = (value.startsWith("'") || value.startsWith("\"")?value.substring(1):value);
-        stringValue = (stringValue.endsWith("'") || value.endsWith("\"")?value.substring(0, value.length()-1):stringValue);
+        stringValue = (stringValue.endsWith("'") || stringValue.endsWith("\"")?stringValue.substring(0, stringValue.length()-1):stringValue);
     }
 
     @Override

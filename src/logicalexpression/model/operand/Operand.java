@@ -40,6 +40,12 @@ public abstract class Operand implements ITokenIdentifier, IToken{
         return returnValue;
     }
     
+    public static Operand build(boolean value) {
+        Operand returnValue = null;
+        returnValue = new BooleanOperand(value);
+        return returnValue;
+    }
+    
     public void setDataSource(IDataSource dataSource) {
         this.dataSource = dataSource;
     }

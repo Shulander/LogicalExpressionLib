@@ -67,4 +67,10 @@ public class ChangePrecedence implements ITokenIdentifier, IToken {
             return null;
         }
     }
+
+    public EPrecedenceTokens getPrecedence() {
+        return precedence;
+    }
+    
+    
 }
