@@ -28,7 +28,6 @@ import logicalexpression.model.operand.Operand;
 class LogicalExpression implements IDataSource {
     List<IToken> tokenList;
     private Map<String, Comparable> parameters;
-    private int startIndex;
     
     public LogicalExpression() {
         tokenList = new ArrayList<>();
