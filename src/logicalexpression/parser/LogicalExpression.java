@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package logicalexpression.parser;
 
 import java.util.ArrayList;
@@ -11,10 +6,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.StringTokenizer;
+import logicalexpression.exception.ParseException;
+import logicalexpression.exception.ProcessException;
 import logicalexpression.model.ChangePrecedence;
 import logicalexpression.model.ChangePrecedence.EPrecedenceTokens;
 import logicalexpression.model.EOperator;
-import static logicalexpression.model.EOperator.NOT;
 import logicalexpression.model.IToken;
 import logicalexpression.model.ITokenIdentifier;
 import logicalexpression.model.Operator;
@@ -28,37 +24,43 @@ import logicalexpression.model.operand.Operand;
 class LogicalExpression implements IDataSource {
     List<IToken> tokenList;
     private Map<String, Comparable> parameters;
+	private IDebugListener debugListener;
     
     public LogicalExpression() {
         tokenList = new ArrayList<>();
         parameters = new HashMap<>();
     }
+
+	public void setDebugListener(IDebugListener debugListener)
+	{
+		this.debugListener = debugListener;
+	}	
     
-    public void parseInputString(String str) {
+    public void parseInputString(String str) throws ParseException {
         tokenList.clear();
         str = str.replace("(", " ( ").replace(")", " ) ");
 
         StringTokenizer st = new StringTokenizer(str);
         while (st.hasMoreTokens()) {
             String newToken = st.nextToken();
-            System.out.println(newToken);
             parseToken(newToken);
         }
         if(!ChangePrecedence.isBalanced()) {
-            throw new IllegalArgumentException("the number of open parentesis does not maches the close number, please review your expression!");
+            throw new ParseException("the number of open parentesis does not maches the close number, please review your expression!");
         }
-        System.out.println("token size: "+tokenList.size());
     }
     
-    public Boolean process(Map<String, Comparable> parameters) {
-        this.parameters = parameters;
+    public Boolean process(Map<String, Comparable> parameters) throws ProcessException {
+		if(parameters!=null) {
+			this.parameters = parameters;
+		}
  
         Operand op = process();
         
         return op.getValue().compareTo(true)==0;
     }
     
-    private Operand process() {
+    private Operand process() throws ProcessException {
         
         Stack<Operand> operandStack = new Stack<>();
         Stack<Operator> operatorStack = new Stack<>();
@@ -92,10 +94,14 @@ class LogicalExpression implements IDataSource {
             operandStack.push(processOperator(operatorStack.pop(), operandStack.pop(), operandStack.pop()));
         }
         
-        return operandStack.size()==1?operandStack.pop(): null;
+        if(operandStack.size()==1) {
+			return operandStack.pop();
+		} else {
+			throw new ProcessException("There is a problem processing the expression, there are operands or operators left.");
+		}
     }
 
-    private Operand processNot() {
+    private Operand processNot() throws ProcessException {
         Operand returnValue = null;
         if(!tokenList.isEmpty()) {
             ITokenIdentifier token = (ITokenIdentifier) tokenList.remove(0);
@@ -103,7 +109,7 @@ class LogicalExpression implements IDataSource {
                 if(((ChangePrecedence)token).getPrecedence().equals(EPrecedenceTokens.OPEN)) {
                     returnValue = process();
                 } else {
-                    System.out.println("expecting and operand or open parentesis ('('), found a ')'");
+                    throw new ProcessException("expecting and operand or open parentesis ('('), found a ')'");
                 }
             } else if(token.isOperand()) {
                 returnValue = (Operand) token;
@@ -111,15 +117,15 @@ class LogicalExpression implements IDataSource {
                 if(((Operator) token).getOperator().equals(EOperator.NOT)) {
                     returnValue = processNot();
                 } else {
-                    System.out.println("expecting and operand or open parentesis ('('), found an operator");
+                    throw new ProcessException("expecting and operand or open parentesis ('('), found an operator");
                 }
             }
         } else {
-            System.out.println("expecting and operand or open parentesis ('(')");
+            throw new ProcessException("expecting and operand or open parentesis ('(')");
         }
         
-        Operand returnValue2 = Operand.build(NOT.compare(returnValue.getValue(), null));
-        System.out.println("Process: "+NOT+" "+returnValue.getValue()+"; Result: "+returnValue2.getValue());
+        Operand returnValue2 = Operand.build(EOperator.NOT.compare(returnValue.getValue(), null));
+        logDebug("Process: "+EOperator.NOT+" "+returnValue.getValue()+"; Result: "+returnValue2.getValue());
         return returnValue2;
     }
 
@@ -127,11 +133,11 @@ class LogicalExpression implements IDataSource {
         operator.addOperand(operandB);
         operator.addOperand(operandA);
         Operand returnValue = operator.process();
-        System.out.println("Process: "+operandB.getValue()+" "+ operator.getOperator()+" "+operandA.getValue()+"; Result: "+returnValue.getValue());
+        logDebug("Process: "+operandB.getValue()+" "+ operator.getOperator()+" "+operandA.getValue()+"; Result: "+returnValue.getValue());
         return returnValue;
     }
 
-    private void parseToken(String newStrToken) {
+    private void parseToken(String newStrToken) throws ParseException {
         IToken newToken = null;
         if ((newToken = ChangePrecedence.build(newStrToken)) != null) {
             tokenList.add(newToken);
@@ -141,24 +147,40 @@ class LogicalExpression implements IDataSource {
             ((Operand)newToken).setDataSource(this);
             tokenList.add(newToken);
         } else {
-            throw new IllegalArgumentException("couldn't parse the token '"+newStrToken+"'");
+            throw new ParseException("couldn't parse the token '"+newStrToken+"'");
         }
     }
     
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ParseException, ProcessException {
         LogicalExpression le = new LogicalExpression();
-        le.parseInputString("eventID == '123456' or (123 GT 23 AND (123 != 45))");
+		le.setDebugListener(new IDebugListener()
+		{
+
+			@Override
+			public void logDebug(String description)
+			{
+				System.out.println(description);
+			}
+		});
+		
+        le.parseInputString("eventID == '123456' or (123 GT 23 AND (123 != 45)) AND (asdf == null)");
         
         Map<String, Comparable> parameters = new HashMap<>();
         parameters.put("eventID", "123456");
         
         System.out.println("result: "+le.process(parameters));
-        System.out.println("32adf34".matches("[\\p{Alnum}]+"));
     }
 
     @Override
     public Comparable getValue(String key) {
         return parameters.get(key);
     }
+
+	private void logDebug(String description)
+	{
+		if(debugListener!=null) {
+			debugListener.logDebug(description);
+		}
+	}
 }
