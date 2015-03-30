@@ -13,13 +13,13 @@ public enum EOperator {
     EQ(new String[]{"EQ", "=="}) {
         @Override
         public Boolean compare(Comparable a, Comparable b) {
-            return a == null ? b == null : a.compareTo(b) == 0;
+            return a == null ? b == null : b!=null && a.compareTo(b) == 0;
         }
     },
     NE(new String[]{"NE", "!="}) {
         @Override
         public Boolean compare(Comparable a, Comparable b) {
-            return a == null ? b != null : a.compareTo(b) != 0;
+            return a == null ? b != null : b==null || a.compareTo(b) != 0;
         }
     },
     GT(new String[]{"GT", ">"}) {

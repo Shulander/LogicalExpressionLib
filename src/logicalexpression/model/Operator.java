@@ -38,16 +38,14 @@ public class Operator implements ITokenIdentifier, ITokenProcessor, IToken {
         Operator returnValue = new Operator(operator);
         return returnValue;
     }
-    
-    public void addOperand(Operand operand) {
-        if(operandA == null) {
-            operandA = operand;
-        } else if(operandB == null) {
-            operandB = operand;
-        } else {
-            throw new IllegalArgumentException("Too many operand were defined for this Operator");
-        }
-    }
+
+	public void setOperandA(Operand operand){
+		operandA = operand;
+	}
+
+	public void setOperandB(Operand operand){
+		operandB = operand;
+	}
 
     public EOperator getOperator() {
         return operator;

@@ -21,10 +21,11 @@ import logicalexpression.model.operand.Operand;
  *
  * @author Shulander
  */
-class LogicalExpression implements IDataSource {
-    List<IToken> tokenList;
-    private Map<String, Comparable> parameters;
+public class LogicalExpression implements IDataSource {
+    private List<IToken> tokenList;
+    private Map<String, Comparable<?>> parameters;
 	private IDebugListener debugListener;
+	private int nProcessToken;
     
     public LogicalExpression() {
         tokenList = new ArrayList<>();
@@ -39,10 +40,22 @@ class LogicalExpression implements IDataSource {
     public void parseInputString(String str) throws ParseException {
         tokenList.clear();
         str = str.replace("(", " ( ").replace(")", " ) ");
-
+		
+		Map<String, String> stringTokens = new HashMap<>();
+		int i=0;
+		int iniIndex = -1;
+		while((iniIndex = str.indexOf('\''))>=0) {
+			int endIndex = str.indexOf('\'', iniIndex+1);
+			String newIndex = String.format("%03d", ++i);
+			String subString = str.substring(iniIndex, endIndex+1);
+			str = str.replaceAll(subString, newIndex);
+			stringTokens.put(newIndex, subString);
+		}
+		
         StringTokenizer st = new StringTokenizer(str);
         while (st.hasMoreTokens()) {
             String newToken = st.nextToken();
+			newToken = stringTokens.containsKey(newToken)? stringTokens.get(newToken):newToken;
             parseToken(newToken);
         }
         if(!ChangePrecedence.isBalanced()) {
@@ -50,11 +63,11 @@ class LogicalExpression implements IDataSource {
         }
     }
     
-    public Boolean process(Map<String, Comparable> parameters) throws ProcessException {
+    public Boolean process(Map<String, Comparable<?>> parameters) throws ProcessException {
 		if(parameters!=null) {
 			this.parameters = parameters;
 		}
- 
+		nProcessToken=0;
         Operand op = process();
         
         return op.getValue().compareTo(true)==0;
@@ -67,8 +80,8 @@ class LogicalExpression implements IDataSource {
         
         boolean doneHere = false;
 
-        while(!tokenList.isEmpty() && !doneHere) {
-            ITokenIdentifier token = (ITokenIdentifier) tokenList.remove(0);
+        while(nProcessToken<tokenList.size() && !doneHere) {
+            ITokenIdentifier token = (ITokenIdentifier) tokenList.get(nProcessToken++);
             if(token.isChangePrecedence()) {
                 if(((ChangePrecedence)token).getPrecedence().equals(EPrecedenceTokens.OPEN)) {
                     operandStack.push(process());
@@ -103,8 +116,8 @@ class LogicalExpression implements IDataSource {
 
     private Operand processNot() throws ProcessException {
         Operand returnValue = null;
-        if(!tokenList.isEmpty()) {
-            ITokenIdentifier token = (ITokenIdentifier) tokenList.remove(0);
+        if(nProcessToken<tokenList.size()) {
+            ITokenIdentifier token = (ITokenIdentifier) tokenList.get(nProcessToken++);
             if(token.isChangePrecedence()) {
                 if(((ChangePrecedence)token).getPrecedence().equals(EPrecedenceTokens.OPEN)) {
                     returnValue = process();
@@ -130,8 +143,8 @@ class LogicalExpression implements IDataSource {
     }
 
     private Operand processOperator(Operator operator, Operand operandA, Operand operandB) {
-        operator.addOperand(operandB);
-        operator.addOperand(operandA);
+        operator.setOperandA(operandB);
+        operator.setOperandB(operandA);
         Operand returnValue = operator.process();
         logDebug("Process: "+operandB.getValue()+" "+ operator.getOperator()+" "+operandA.getValue()+"; Result: "+returnValue.getValue());
         return returnValue;
@@ -165,11 +178,28 @@ class LogicalExpression implements IDataSource {
 		});
 		
         le.parseInputString("eventID == '123456' or (123 GT 23 AND (123 != 45)) AND (asdf == null)");
+//        le.parseInputString("(directionA == 'out') and (eventIdB == null)");
         
-        Map<String, Comparable> parameters = new HashMap<>();
+        Map<String, Comparable<?>> parameters = new HashMap<>();
         parameters.put("eventID", "123456");
+        parameters.put("directionA", "in");
         
         System.out.println("result: "+le.process(parameters));
+		
+		
+		String str = "(directionA == 'out') and (directionB == 'in') and (truckTypeA == 'logs load truck') and (truckTypeA == truckTypeB)";
+		Map<String, String> stringTokens = new HashMap<>();
+		int i=0;
+		int iniIndex = -1;
+		while((iniIndex = str.indexOf('\''))>=0) {
+			int endIndex = str.indexOf('\'', iniIndex+1);
+			String newIndex = String.format("%03d", ++i);
+			String subString = str.substring(iniIndex, endIndex+1);
+			str = str.replaceAll(subString, newIndex);
+			stringTokens.put(newIndex, subString);
+		}
+		
+		System.out.println(str);
     }
 
     @Override
