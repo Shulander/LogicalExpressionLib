@@ -19,7 +19,7 @@ public enum EOperator {
     NE(new String[]{"NE", "!="}) {
         @Override
         public Boolean compare(Comparable a, Comparable b) {
-            return a == null ? b != null : b==null || a.compareTo(b) != 0;
+            return !EQ.compare(a, b);
         }
     },
     GT(new String[]{"GT", ">"}) {
