@@ -46,9 +46,9 @@ public class LogicalExpression implements IDataSource {
 		int iniIndex = -1;
 		while((iniIndex = str.indexOf('\''))>=0) {
 			int endIndex = str.indexOf('\'', iniIndex+1);
-			String newIndex = String.format("%03d", ++i);
+			String newIndex = String.format("IDX%03d", ++i);
 			String subString = str.substring(iniIndex, endIndex+1);
-			str = str.replaceAll(subString, newIndex);
+			str = str.replace(subString, newIndex);
 			stringTokens.put(newIndex, subString);
 		}
 		
@@ -187,15 +187,15 @@ public class LogicalExpression implements IDataSource {
         System.out.println("result: "+le.process(parameters));
 		
 		
-		String str = "(directionA == 'out') and (directionB == 'in') and (truckTypeA == 'logs load truck') and (truckTypeA == truckTypeB)";
+		String str = "(upsMessage == '$') or (upsMessage != '$')";
 		Map<String, String> stringTokens = new HashMap<>();
 		int i=0;
 		int iniIndex = -1;
 		while((iniIndex = str.indexOf('\''))>=0) {
 			int endIndex = str.indexOf('\'', iniIndex+1);
-			String newIndex = String.format("%03d", ++i);
+			String newIndex = String.format("IDX%03d", ++i);
 			String subString = str.substring(iniIndex, endIndex+1);
-			str = str.replaceAll(subString, newIndex);
+			str = str.replace(subString, newIndex);
 			stringTokens.put(newIndex, subString);
 		}
 		
