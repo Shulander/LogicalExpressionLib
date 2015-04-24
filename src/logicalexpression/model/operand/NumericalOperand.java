@@ -14,9 +14,9 @@ class NumericalOperand extends Operand {
 
     public NumericalOperand(String value) {
         if(value.matches("[0-9]+(.[0-9]+)*")) {
-            numericalValue = Integer.parseInt(value);
-        } else {
             numericalValue = Float.parseFloat(value);
+        } else {
+            numericalValue = Integer.parseInt(value);
         }
     }
 

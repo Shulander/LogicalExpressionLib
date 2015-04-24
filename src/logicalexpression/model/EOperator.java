@@ -25,13 +25,13 @@ public enum EOperator {
     GT(new String[]{"GT", ">"}) {
         @Override
         public Boolean compare(Comparable a, Comparable b) {
-            return a.compareTo(b) > 0;
+            return a == null || b == null ? false : a.compareTo(b) > 0;
         }
     },
     LT(new String[]{"LT", "<"}) {
         @Override
         public Boolean compare(Comparable a, Comparable b) {
-            return a.compareTo(b) < 0;
+            return a == null || b == null ? false : a.compareTo(b) < 0;
         }
     },
     LE(new String[]{"LE", ">="}) {
