@@ -24,4 +24,9 @@ class StringOperand extends Operand {
 			return this.toString().compareTo(o.toString());
 		}
 	}
+	
+	@Override
+	public String toString() {
+		return stringValue;
+	}
 }

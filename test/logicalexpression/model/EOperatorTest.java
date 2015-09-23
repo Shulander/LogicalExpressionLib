@@ -45,8 +45,8 @@ public class EOperatorTest {
     @Test
     public void testCompare() {
         System.out.println("compare");
-        Comparable a = 5;
-        Comparable b = 10;
+        Operand a = Operand.build(5);
+        Operand b = Operand.build(10);
         EOperator instance = EOperator.EQ;
         Operand result = instance.compare(a, b);
         assertEquals(result, Operand.build(false));

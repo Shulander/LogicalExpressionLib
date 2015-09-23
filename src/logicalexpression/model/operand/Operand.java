@@ -38,6 +38,10 @@ public abstract class Operand implements ITokenIdentifier, IToken, Comparable<Op
         }
         return returnValue;
     }
+	
+	public static Operand build(Number value) {
+		return NumericalOperand.buildNumericalOperand(value);
+	}
     
     public static Operand build(boolean value) {
         return BooleanOperand.getBooleanOperandInstance(value);

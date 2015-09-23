@@ -10,5 +10,5 @@ package logicalexpression.model.operand;
  * @author Shulander
  */
 public interface IDataSource {
-    public Comparable getValue(String key);
+    public Comparable<?> getValue(String key);
 }

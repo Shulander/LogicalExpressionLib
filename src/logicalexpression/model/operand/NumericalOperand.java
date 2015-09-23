@@ -14,7 +14,7 @@ import java.text.NumberFormat;
 abstract class NumericalOperand extends Operand {
 	
 	protected static NumberFormat nf;
-	
+
 	static {
 		nf = NumberFormat.getInstance();
 		nf.setMaximumFractionDigits(2);
@@ -28,8 +28,20 @@ abstract class NumericalOperand extends Operand {
 			return new IntegerOperand(Integer.parseInt(value));
         }
     }
+
+	static Operand buildNumericalOperand(Number value)
+	{
+		if(value instanceof Float) {
+			return new FloatOperand((Float)value);
+		} else if(value instanceof Integer) {
+			return new IntegerOperand((Integer)value);
+		} else {
+			return buildNumericalOperand(nf.format(value));
+		}
+	}
 	
 	static private class FloatOperand extends NumericalOperand {
+		
 		Float value;
 		
 		FloatOperand(Float value) {
@@ -81,7 +93,7 @@ abstract class NumericalOperand extends Operand {
 		
 		@Override
 		public String toString() {
-			return nf.format(value);
+			return value.toString();
 		}
 	}
 	

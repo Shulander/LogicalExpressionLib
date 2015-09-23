@@ -1,7 +1,5 @@
 package logicalexpression.model;
 
-import java.nio.channels.Channels;
-
 /**
  *
  * @author Shulander
