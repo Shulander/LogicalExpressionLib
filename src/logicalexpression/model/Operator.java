@@ -53,8 +53,6 @@ public class Operator implements ITokenIdentifier, ITokenProcessor, IToken {
     
     @Override
     public Operand process() {
-        Comparable a = operandA!=null?operandA.getValue():null;
-        Comparable b = operandB!=null?operandB.getValue():null;
-        return Operand.build(operator.compare(a, b));
+        return operator.compare(operandA, operandB);
     }
 }

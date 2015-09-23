@@ -4,7 +4,7 @@ package logicalexpression.model.operand;
  *
  * @author Shulander
  */
-public class StringOperand extends Operand {
+class StringOperand extends Operand {
     private String stringValue;
 
     StringOperand(String value) {
@@ -12,8 +12,16 @@ public class StringOperand extends Operand {
         stringValue = (stringValue.endsWith("'") || stringValue.endsWith("\"")?stringValue.substring(0, stringValue.length()-1):stringValue);
     }
 
-    @Override
-    public Comparable getValue() {
-        return stringValue;
-    }
+	@Override
+	public int compareTo(Operand o)
+	{
+		if(o == null) {
+			return 1;
+		}
+		if(o instanceof StringOperand) {
+			return stringValue.compareTo(((StringOperand)o).stringValue);
+		} else {
+			return this.toString().compareTo(o.toString());
+		}
+	}
 }

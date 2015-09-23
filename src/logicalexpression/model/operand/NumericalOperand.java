@@ -5,24 +5,84 @@
  */
 package logicalexpression.model.operand;
 
+import java.text.NumberFormat;
+
 /**
  *
  * @author Shulander
  */
-class NumericalOperand extends Operand {
-    private final Comparable numericalValue;
+abstract class NumericalOperand extends Operand {
+	
+	protected static NumberFormat nf;
+	
+	static {
+		nf = NumberFormat.getInstance();
+		nf.setMaximumFractionDigits(2);
+		nf.setMinimumFractionDigits(2);
+	}
 
-    public NumericalOperand(String value) {
+    public static NumericalOperand buildNumericalOperand(String value) {
         if(value.matches("[0-9]+(.[0-9]+)*")) {
-            numericalValue = Float.parseFloat(value);
+			return new FloatOperand(Float.parseFloat(value));
         } else {
-            numericalValue = Integer.parseInt(value);
+			return new IntegerOperand(Integer.parseInt(value));
         }
     }
-
-    @Override
-    public Comparable getValue() {
-        return numericalValue;
-    }
-    
+	
+	static private class FloatOperand extends NumericalOperand {
+		Float value;
+		
+		FloatOperand(Float value) {
+			this.value = value;
+		}
+	
+		@Override
+		public int compareTo(Operand o)
+		{
+			if(o == null) {
+				return 1;
+			}
+			if(o instanceof IntegerOperand) {
+				return Float.compare(value, ((IntegerOperand)o).value);
+			} else if(o instanceof FloatOperand) {
+				return Float.compare(value, ((FloatOperand)o).value);
+			} else {
+				return this.getClass().getName().compareTo(o.getClass().getName());
+			}
+		}
+		
+		@Override
+		public String toString() {
+			return nf.format(value);
+		}
+	}
+	
+	static private class IntegerOperand extends NumericalOperand {
+		Integer value;
+		
+		IntegerOperand(Integer value) {
+			this.value = value;
+		}
+	
+		@Override
+		public int compareTo(Operand o)
+		{
+			if(o == null) {
+				return 1;
+			}
+			if(o instanceof IntegerOperand) {
+				return Integer.compare(value, ((IntegerOperand)o).value);
+			} else if(o instanceof FloatOperand) {
+				return Float.compare(value, ((FloatOperand)o).value);
+			} else {
+				return this.toString().compareTo(o.toString());
+			}
+		}
+		
+		@Override
+		public String toString() {
+			return nf.format(value);
+		}
+	}
+	
 }

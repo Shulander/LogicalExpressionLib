@@ -5,6 +5,7 @@
  */
 package logicalexpression.model;
 
+import logicalexpression.model.operand.Operand;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -47,20 +48,20 @@ public class EOperatorTest {
         Comparable a = 5;
         Comparable b = 10;
         EOperator instance = EOperator.EQ;
-        Boolean result = instance.compare(a, b);
-        assertFalse(result);
+        Operand result = instance.compare(a, b);
+        assertEquals(result, Operand.build(false));
         instance = EOperator.GE;
         result = instance.compare(a, b);
-        assertFalse(result);
+        assertEquals(result, Operand.build(false));
         instance = EOperator.LE;
         result = instance.compare(a, b);
-        assertTrue(result);
+        assertEquals(result, Operand.build(true));
         instance = EOperator.LT;
         result = instance.compare(a, b);
-        assertTrue(result);
+        assertEquals(result, Operand.build(true));
         instance = EOperator.NE;
         result = instance.compare(a, b);
-        assertTrue(result);
+        assertEquals(result, Operand.build(true));
     }
 
     /**

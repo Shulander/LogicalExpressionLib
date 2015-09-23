@@ -3,6 +3,7 @@ package logicalexpression.model;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import logicalexpression.model.operand.Operand;
 
 /**
  *
@@ -12,60 +13,72 @@ public enum EOperator {
     
     EQ(new String[]{"EQ", "=="}) {
         @Override
-        public Boolean compare(Comparable a, Comparable b) {
-            return a == null ? b == null : b!=null && a.compareTo(b) == 0;
+        public Operand compare(Comparable a, Comparable b) {
+            boolean returnValue = a == null ? b == null : b!=null && a.compareTo(b) == 0;
+			return Operand.build(returnValue);
         }
     },
     NE(new String[]{"NE", "!="}) {
         @Override
-        public Boolean compare(Comparable a, Comparable b) {
-            return !EQ.compare(a, b);
+        public Operand compare(Comparable a, Comparable b) {
+            boolean returnValue = EQ.compare(a, b).compareTo(Operand.build(false)) == 0;
+			return Operand.build(returnValue);
         }
     },
     GT(new String[]{"GT", ">"}) {
         @Override
-        public Boolean compare(Comparable a, Comparable b) {
-            return a == null || b == null ? false : a.compareTo(b) > 0;
+        public Operand compare(Comparable a, Comparable b) {
+            boolean returnValue = a == null || b == null ? false : a.compareTo(b) > 0;
+			return Operand.build(returnValue);
         }
     },
     LT(new String[]{"LT", "<"}) {
         @Override
-        public Boolean compare(Comparable a, Comparable b) {
-            return a == null || b == null ? false : a.compareTo(b) < 0;
+        public Operand compare(Comparable a, Comparable b) {
+            boolean returnValue = a == null || b == null ? false : a.compareTo(b) < 0;
+			return Operand.build(returnValue);
         }
     },
     LE(new String[]{"LE", ">="}) {
         @Override
-        public Boolean compare(Comparable a, Comparable b) {
-            return LT.compare(a, b) || EQ.compare(a, b);
+        public Operand compare(Comparable a, Comparable b) {
+            int returnValue = LT.compare(a, b).compareTo(Operand.build(true));
+			returnValue = returnValue == 0? returnValue : EQ.compare(a, b).compareTo(Operand.build(true));
+			return Operand.build(returnValue==0);
         }
     },
     GE(new String[]{"GE", "<="}) {
         @Override
-        public Boolean compare(Comparable a, Comparable b) {
-            return GT.compare(a, b) || EQ.compare(a, b);
+        public Operand compare(Comparable a, Comparable b) {			
+            int returnValue = GT.compare(a, b).compareTo(Operand.build(true));
+			returnValue = returnValue == 0? returnValue : EQ.compare(a, b).compareTo(Operand.build(true));
+			return Operand.build(returnValue == 0);
         }
     },
     AND(new String[]{"AND", "&&"}) {
         @Override
-        public Boolean compare(Comparable a, Comparable b) {
-            return a.compareTo(true)==0 && a.compareTo(b)==0;
+        public Operand compare(Comparable a, Comparable b) {
+            boolean returnValue = a.compareTo(Operand.build(true))==0 && a.compareTo(b)==0;
+			return Operand.build(returnValue);
         }
     },
     OR(new String[]{"OR", "||"}) {
         @Override
-        public Boolean compare(Comparable a, Comparable b) {
-            return a.compareTo(true)==0 || b.compareTo(true)==0;
+        public Operand compare(Comparable a, Comparable b) {
+            boolean returnValue = a.compareTo(Operand.build(true))==0 || b.compareTo(Operand.build(true))==0;
+			return Operand.build(returnValue);
         }
     },
     NOT(new String[]{"NOT"}) {
         @Override
-        public Boolean compare(Comparable a, Comparable b) {
+        public Operand compare(Comparable a, Comparable b) {
+			boolean returnValue;
             if(b != null) {
-                return b.compareTo(true)!=0;
+                returnValue = b.compareTo(true)!=0;
             } else {
-                return a.compareTo(true)!=0;
+                returnValue = a.compareTo(true)!=0;
             }
+			return Operand.build(returnValue);
         }
     };
     
@@ -76,7 +89,7 @@ public enum EOperator {
         values.addAll(Arrays.asList(newValue));
     }
     
-    public abstract Boolean compare(Comparable a, Comparable b);
+    public abstract Operand compare(Comparable a, Comparable b);
     
     public static EOperator parseString(String str) {
         for (EOperator operator : EOperator.values()) {

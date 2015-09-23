@@ -2,13 +2,12 @@ package logicalexpression.model.operand;
 
 import logicalexpression.model.IToken;
 import logicalexpression.model.ITokenIdentifier;
-import logicalexpression.model.ITokenProcessor;
 
 /**
  *
  * @author Shulander
  */
-public abstract class Operand implements ITokenIdentifier, IToken{
+public abstract class Operand implements ITokenIdentifier, IToken, Comparable<Operand> {
     protected IDataSource dataSource;
 
     @Override
@@ -31,9 +30,9 @@ public abstract class Operand implements ITokenIdentifier, IToken{
         if(value.startsWith("'") || value.startsWith("\"")) {
             returnValue = new StringOperand(value);
         } else if(value.matches("[0-9]+(.[0-9]+)*")) {
-            returnValue = new NumericalOperand(value);
+            returnValue = NumericalOperand.buildNumericalOperand(value);
         } else if("true".equals(value.toLowerCase())||"false".equals(value.toLowerCase())) {
-            returnValue = new BooleanOperand(value);
+            returnValue = BooleanOperand.getBooleanOperandInstance(value);
         } else if(value.matches("[\\p{Alnum}]+")) {
             returnValue = new ParameterOperand(value);
         }
@@ -41,14 +40,10 @@ public abstract class Operand implements ITokenIdentifier, IToken{
     }
     
     public static Operand build(boolean value) {
-        Operand returnValue = null;
-        returnValue = new BooleanOperand(value);
-        return returnValue;
+        return BooleanOperand.getBooleanOperandInstance(value);
     }
     
     public void setDataSource(IDataSource dataSource) {
         this.dataSource = dataSource;
     }
-    
-    public abstract Comparable getValue();
 }

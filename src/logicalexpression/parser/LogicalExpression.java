@@ -70,7 +70,7 @@ public class LogicalExpression implements IDataSource {
 		nProcessToken=0;
         Operand op = process();
         
-        return op.getValue().compareTo(true)==0;
+        return op.compareTo(Operand.build(true))==0;
     }
     
     private Operand process() throws ProcessException {
@@ -137,8 +137,8 @@ public class LogicalExpression implements IDataSource {
             throw new ProcessException("expecting and operand or open parentesis ('(')");
         }
         
-        Operand returnValue2 = Operand.build(EOperator.NOT.compare(returnValue.getValue(), null));
-        logDebug("Process: "+EOperator.NOT+" "+returnValue.getValue()+"; Result: "+returnValue2.getValue());
+        Operand returnValue2 = EOperator.NOT.compare(returnValue, null);
+        logDebug("Process: "+EOperator.NOT+" "+returnValue+"; Result: "+returnValue2);
         return returnValue2;
     }
 
@@ -146,7 +146,7 @@ public class LogicalExpression implements IDataSource {
         operator.setOperandA(operandB);
         operator.setOperandB(operandA);
         Operand returnValue = operator.process();
-        logDebug("Process: "+operandB.getValue()+" "+ operator.getOperator()+" "+operandA.getValue()+"; Result: "+returnValue.getValue());
+        logDebug("Process: "+operandB+" "+ operator.getOperator()+" "+operandA+"; Result: "+returnValue);
         return returnValue;
     }
 
@@ -203,7 +203,7 @@ public class LogicalExpression implements IDataSource {
     }
 
     @Override
-    public Comparable getValue(String key) {
+    public Comparable<?> getValue(String key) {
         return parameters.get(key);
     }
 
