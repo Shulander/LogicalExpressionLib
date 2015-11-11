@@ -66,4 +66,7 @@ class ParameterOperand extends Operand {
 		return value.toString();
 	}
 	
+	public String getParameterName() {
+		return parameterName;
+	}
 }

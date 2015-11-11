@@ -2,6 +2,7 @@ package logicalexpression.parser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -80,7 +81,7 @@ public class LogicalExpression implements IDataSource {
         
         boolean doneHere = false;
 
-        while(nProcessToken<tokenList.size() && !doneHere) {
+        while(nProcessToken < tokenList.size() && !doneHere) {
             ITokenIdentifier token = (ITokenIdentifier) tokenList.get(nProcessToken++);
             if(token.isChangePrecedence()) {
                 if(((ChangePrecedence)token).getPrecedence().equals(EPrecedenceTokens.OPEN)) {
@@ -164,6 +165,9 @@ public class LogicalExpression implements IDataSource {
         }
     }
     
+	public List<String> getParameterOperandsNames() {
+		return Operand.getParameterOperands(tokenList);
+	}
     
     public static void main(String[] args) throws ParseException, ProcessException {
         LogicalExpression le = new LogicalExpression();
@@ -184,6 +188,10 @@ public class LogicalExpression implements IDataSource {
         parameters.put("eventID", "123456");
         parameters.put("directionA", "in");
         
+		for(String parameterOperandsName : le.getParameterOperandsNames())
+		{
+			System.out.println("operand: "+parameterOperandsName);
+		}
         System.out.println("result: "+le.process(parameters));
 		
 		

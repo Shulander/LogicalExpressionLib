@@ -1,5 +1,7 @@
 package logicalexpression.model.operand;
 
+import java.util.LinkedList;
+import java.util.List;
 import logicalexpression.model.IToken;
 import logicalexpression.model.ITokenIdentifier;
 
@@ -8,6 +10,7 @@ import logicalexpression.model.ITokenIdentifier;
  * @author Shulander
  */
 public abstract class Operand implements ITokenIdentifier, IToken, Comparable<Operand> {
+
     protected IDataSource dataSource;
 
     @Override
@@ -38,6 +41,20 @@ public abstract class Operand implements ITokenIdentifier, IToken, Comparable<Op
         }
         return returnValue;
     }
+	
+	public static List<String> getParameterOperands(List<IToken> tokenList)
+	{
+		List<String> returnValue = new LinkedList<>();
+		
+		for(IToken token : tokenList)
+		{
+			if(token instanceof ParameterOperand) {
+				returnValue.add(((ParameterOperand)token).getParameterName());
+			}
+		}
+		
+		return returnValue;
+	}
 	
 	public static Operand build(Number value) {
 		return NumericalOperand.buildNumericalOperand(value);
