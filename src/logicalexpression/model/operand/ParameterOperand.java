@@ -21,14 +21,14 @@ class ParameterOperand extends Operand {
 	@Override
 	public int compareTo(Operand o)
 	{
-		if(o == null) {
-			return 1;
-		}
-		
-		
 		Comparable<?> thisValue = getValue();
 		Operand o1 = convert(thisValue);
 		Operand o2 = o;
+		
+		if(o2 == null && o1 ==null) {
+			return 0;
+		}
+		
 		if(o instanceof ParameterOperand) {
 			ParameterOperand other = (ParameterOperand) o;
 			Comparable<?> otherValue = other.getValue();
@@ -37,6 +37,14 @@ class ParameterOperand extends Operand {
 			if(thisValue == null && otherValue == null) {
 				return 0;
 			}
+		}
+		
+		if(o1 == null && o2 != null) {
+			return 1;
+		} else if(o2 == null && o1 !=null) {
+			return -1;
+		} else if(o2 == null && o1 ==null) {
+			return 0;
 		}
 		
 		return o1.compareTo(o2);

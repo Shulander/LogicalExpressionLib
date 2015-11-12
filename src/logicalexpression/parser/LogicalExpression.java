@@ -193,21 +193,40 @@ public class LogicalExpression implements IDataSource {
 			System.out.println("operand: "+parameterOperandsName);
 		}
         System.out.println("result: "+le.process(parameters));
+//
+//		
+//		String str = "(upsMessage == '$') or (upsMessage != '$')";
+//		Map<String, String> stringTokens = new HashMap<>();
+//		int i=0;
+//		int iniIndex = -1;
+//		while((iniIndex = str.indexOf('\''))>=0) {
+//			int endIndex = str.indexOf('\'', iniIndex+1);
+//			String newIndex = String.format("IDX%03d", ++i);
+//			String subString = str.substring(iniIndex, endIndex+1);
+//			str = str.replace(subString, newIndex);
+//			stringTokens.put(newIndex, subString);
+//		}
+//		
+//		System.out.println(str);
 		
+		LogicalExpression le2 = new LogicalExpression();
+		le2.setDebugListener(new IDebugListener()
+		{
+
+			@Override
+			public void logDebug(String description)
+			{
+				System.out.println(description);
+			}
+		});
 		
-		String str = "(upsMessage == '$') or (upsMessage != '$')";
-		Map<String, String> stringTokens = new HashMap<>();
-		int i=0;
-		int iniIndex = -1;
-		while((iniIndex = str.indexOf('\''))>=0) {
-			int endIndex = str.indexOf('\'', iniIndex+1);
-			String newIndex = String.format("IDX%03d", ++i);
-			String subString = str.substring(iniIndex, endIndex+1);
-			str = str.replace(subString, newIndex);
-			stringTokens.put(newIndex, subString);
-		}
-		
-		System.out.println(str);
+        le2.parseInputString("(NOT sim02) AND (NOT sim01) AND (NOT sim03)");
+//        le.parseInputString("(directionA == 'out') and (eventIdB == null)");
+		Map<String, Comparable<?>> parameters2 = new HashMap<>();
+        parameters2.put("sim02", false);
+        parameters2.put("sim01", true);
+        parameters2.put("directionA", "in");
+        System.out.println("result: "+le2.process(parameters2));
     }
 
     @Override
