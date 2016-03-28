@@ -9,7 +9,7 @@ package logicalexpression.parser;
  *
  * @author Henrique Vicentini <henrique.vicentini@woodtechms.com>
  */
-public interface IDebugListener
-{
+public interface IDebugListener {
+
 	public void logDebug(String description);
 }

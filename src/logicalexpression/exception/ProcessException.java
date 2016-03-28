@@ -9,13 +9,12 @@ package logicalexpression.exception;
  *
  * @author Henrique Vicentini <henrique.vicentini@woodtechms.com>
  */
-public class ProcessException extends Exception
-{
+public class ProcessException extends Exception {
+
 	private static final long serialVersionUID = 1L;
 
-	public ProcessException(String description)
-	{
+	public ProcessException(String description) {
 		super(description);
 	}
-	
+
 }

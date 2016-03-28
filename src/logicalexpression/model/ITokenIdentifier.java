@@ -10,7 +10,10 @@ package logicalexpression.model;
  * @author Shulander
  */
 public interface ITokenIdentifier {
-    boolean isOperand();
-    boolean isOperator();
-    boolean isChangePrecedence();
+
+	boolean isOperand();
+
+	boolean isOperator();
+
+	boolean isChangePrecedence();
 }
